@@ -1,0 +1,35 @@
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    font-family: inherit;
+}
+
+.table thead tr {
+    background-color: #1a5276;
+    color: #ffffff;
+}
+
+.table th {
+    padding: 6px 10px;
+    text-align: left;
+    border: 1px solid #154360;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+.table td {
+    padding: 5px 10px;
+    border: 1px solid #cccccc;
+    color: #000;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #eaf1f8;
+}
+
+.table tbody tr:hover {
+    background-color: #d0e4f5;
+    cursor: pointer;
+}
