@@ -1,0 +1,40 @@
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.input-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+}
+
+.input-field {
+    padding: 4px 8px;
+    font-size: 13px;
+    font-family: inherit;
+    border: 1px solid #7a9bb5;
+    border-radius: 3px;
+    background: #ffffff;
+    color: #000;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: #1a5276;
+}
+
+.input-field:disabled {
+    background: #e8e8e8;
+    cursor: not-allowed;
+}
+
+.input-field.input-error {
+    border-color: #cc0000;
+}
+
+.input-error-msg {
+    font-size: 11px;
+    color: #cc0000;
+}

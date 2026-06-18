@@ -1,0 +1,32 @@
+.layout {
+    display: flex;
+    height: 100vh;
+    font-family: inherit;
+}
+
+.sidebar {
+    width: 200px;
+    background-color: #f0f0f0;
+    border-right: 1px solid #7a9bb5;
+    padding: 12px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.sidebar-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a5276;
+    text-align: center;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+.content {
+    flex: 1;
+    background-color: #f4f4f4;
+    padding: 16px;
+    overflow-y: auto;
+}
