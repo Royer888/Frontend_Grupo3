@@ -1,0 +1,150 @@
+
+.window-frame {
+    max-width: 660px;
+    margin: 20px auto;
+    border-top: 2px solid #fff;
+    border-left: 2px solid #fff;
+    border-right: 2px solid #808080;
+    border-bottom: 2px solid #808080;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    background-color: #d4d0c8;
+}
+
+.window-titlebar {
+    background: linear-gradient(to right, #0a246a, #a6b5d6);
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    padding: 3px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    user-select: none;
+}
+
+.window-titlebar::before {
+    content: "📘"; /* Icono simulado para el before que viste */
+    font-size: 12px;
+}
+
+.window-body {
+    background-color: #d4d0c8;
+    padding: 12px;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+    color: #000080;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* El contenedor hundido de la tabla */
+.panel {
+    background: #fff;
+    border-top: 2px solid #808080;
+    border-left: 2px solid #808080;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    outline: 1px solid #dfdfdf;
+    padding: 4px;
+    margin-bottom: 12px;
+}
+
+.table-wrapper {
+    display: flex;
+}
+
+.table-scroll-area {
+    width: 100%;
+    height: 200px;
+    overflow-y: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.data-table thead tr th {
+    background: linear-gradient(to bottom, #1a3a8e, #1e4d85);
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    padding: 5px 8px;
+    border-right: 1px solid #4060c0;
+    letter-spacing: 0.5px;
+}
+
+.data-table tbody tr td {
+    border-bottom: 1px solid #eee;
+    border-right: 1px dotted #ccc;
+    padding: 4px 8px;
+    color: #333;
+}
+
+.fila-seleccionada td {
+    background-color: #0a246a !important;
+    color: white !important;
+}
+
+/* --- BOTONES --- */
+.button-bar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn {
+    background: #d4d0c8;
+    color: #000;
+    border-top: 1px solid #fff;
+    border-left: 1px solid #fff;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    padding: 4px 15px;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.btn:active {
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+}
+
+/* --- MODALES FLOTANTES --- */
+.modal-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(255, 255, 255, 0.4);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 2000;
+}
+
+/* Ajustes de tamaño para las ventanitas */
+.form-modal { width: 500px; margin: 0; }
+.dialogo-modal { width: 400px; margin: 0; }
+.btn-cerrar { background: none; border: none; color: white; font-weight: bold; cursor: pointer; }
+
+.dialogo-cuerpo { display: flex; align-items: center; padding: 20px; gap: 15px; background: #d4d0c8; }
+.dialogo-cuerpo p { font-size: 13px; margin: 0; color: #000; }
+
+.form-cuerpo { padding: 15px; background: #fff; margin-bottom: 15px; }
+.form-fila { display: flex; margin-bottom: 10px; align-items: flex-start; }
+.form-fila label { width: 150px; color: #000; font-size: 12px; margin-top: 3px; }
+.input-corto { width: 80px; padding: 2px; border: 1px solid #7f9db9; }
+.input-largo { width: 250px; padding: 2px; border: 1px solid #7f9db9; }
+.input-area { width: 250px; height: 60px; padding: 2px; border: 1px solid #7f9db9; resize: none; }
+
+.icono-pregunta { background-color: #000080; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; font-size: 24px; font-weight: bold; }
+.icono-alerta-rojo { background-color: #da3b30; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; font-size: 24px; font-weight: bold; }
