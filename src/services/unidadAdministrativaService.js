@@ -7,17 +7,17 @@ export const getUnidades = async () => {
   return data;
 };
 
-export const createUnidad = async (data) => {
-  const response = await api.post(ENDPOINT, data);
-  return response.data;
+export const createUnidad = async (unidadData) => {
+  const { data } = await api.post(ENDPOINT, unidadData);
+  return data;
 };
 
-export const updateUnidad = async (id, data) => {
-  const response = await api.put(`${ENDPOINT}/${id}`, data);
-  return response.data;
+export const updateUnidad = async (id, unidadData) => {
+  const { data } = await api.put(`${ENDPOINT}/${id}`, unidadData);
+  return data;
 };
 
 export const deleteUnidad = async (id) => {
-  const response = await api.delete(`${ENDPOINT}/${id}`);
-  return response.data;
+  const { data } = await api.delete(`${ENDPOINT}/${id}`);
+  return data;
 };
