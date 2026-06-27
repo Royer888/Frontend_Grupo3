@@ -1,0 +1,71 @@
+.module-panel {
+  width: min(980px, 100%);
+  background: #ffffff;
+  border-radius: 4px;
+  padding: 16px;
+  align-self: flex-start;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+
+.module-title {
+  background: linear-gradient(to bottom, #2e6da4 0%, #1a5276 100%);
+  color: #ffffff;
+  text-align: center;
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.module-content {
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #3e5366;
+  font-size: 14px;
+  border: 1px solid #d8e2ea;
+  background: #f7fafc;
+}
+
+.module-error {
+  border: 1px solid #d89b9b;
+  background: #fff0f0;
+  color: #8a2020;
+  padding: 8px 10px;
+  font-size: 13px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.module-status {
+  border: 1px solid #c8d7e4;
+  background: #f4f8fb;
+  color: #355a79;
+  padding: 16px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.module-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.module-actions .btn-menu {
+  width: 110px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.modal-actions .btn-menu {
+  width: 95px;
+}

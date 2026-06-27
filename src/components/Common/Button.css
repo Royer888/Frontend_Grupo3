@@ -42,3 +42,14 @@
   color: #7a1f1f;
   border-color: #b56d6d;
 }
+
+.btn-active {
+  background: linear-gradient(
+    to bottom,
+    #dcecf8 0%,
+    #a9c9e2 50%,
+    #7fb0d4 100%
+  );
+  color: #123d62;
+  font-weight: 700;
+}

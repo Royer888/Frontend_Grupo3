@@ -33,3 +33,13 @@
     background-color: #d0e4f5;
     cursor: pointer;
 }
+
+.table tbody .table-row-selected {
+    background-color: #bcd8ec;
+}
+
+.table-empty {
+    text-align: center;
+    color: #4f5d67;
+    padding: 14px;
+}

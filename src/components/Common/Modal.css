@@ -24,6 +24,9 @@
     background: linear-gradient(to bottom, #2e6da4 0%, #1a5276 100%);
     padding: 10px 16px;
     border-radius: 4px 4px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .modal-title {
@@ -32,6 +35,17 @@
     font-weight: 600;
     margin: 0;
     text-align: center;
+}
+
+.modal-close {
+    width: 24px;
+    height: 22px;
+    border: 1px solid #d7e7f2;
+    background: #f3f8fc;
+    color: #1a5276;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 1;
 }
 
 .modal-body {

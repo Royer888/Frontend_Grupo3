@@ -1,40 +1,90 @@
-import { useState, useEffect } from 'react';
-import Table from '../components/Common/Table';
-import Modal from '../components/Common/Modal';
-import Input from '../components/Common/Input';
+import { useEffect, useState } from 'react';
 import Button from '../components/Common/Button';
-import './UnidadAdministrativa.css';
+import Input from '../components/Common/Input';
+import Modal from '../components/Common/Modal';
+import Table from '../components/Common/Table';
+import {
+  createUnidad,
+  deleteUnidad,
+  getUnidades,
+  updateUnidad,
+} from '../services/unidadAdministrativaService';
+import '../styles/pages.css';
 
-// Datos simulados (mock) mientras el backend no tiene el endpoint real
-const mockData = [
-  { unidad: '025', descripcion: 'GACETA OFICIAL DE BOLIVIA', ciudad: 'LA PAZ' },
-  { unidad: '252', descripcion: 'NIVEL CENTRAL', ciudad: 'LA PAZ' },
-];
+const emptyForm = {
+  id: '',
+  entidad: '',
+  unidad: '',
+  descripcion: '',
+  ciudad: '',
+  estadoUni: 'ACTIVO',
+};
 
 const columns = [
+  { key: 'entidad', label: 'ENTIDAD' },
   { key: 'unidad', label: 'UNIDAD' },
   { key: 'descripcion', label: 'DESCRIPCION' },
   { key: 'ciudad', label: 'CIUDAD' },
+  { key: 'estadoUni', label: 'ESTADO' },
 ];
 
+const getArrayData = (data) => {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data?.data)) return data.data;
+  if (Array.isArray(data?.content)) return data.content;
+  return [];
+};
+
 function UnidadAdministrativa() {
-  const [datos, setDatos] = useState([]);
+  const [unidades, setUnidades] = useState([]);
   const [filaSeleccionada, setFilaSeleccionada] = useState(null);
   const [modalAbierto, setModalAbierto] = useState(false);
   const [modoEdicion, setModoEdicion] = useState(false);
-
-  const [form, setForm] = useState({ unidad: '', descripcion: '', ciudad: '' });
+  const [form, setForm] = useState(emptyForm);
   const [errores, setErrores] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
 
-  // Simula la carga inicial desde la API
+  const cargarUnidades = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const data = await getUnidades();
+      setUnidades(getArrayData(data));
+      setFilaSeleccionada(null);
+    } catch {
+      setError('No se pudo cargar la lista de unidades administrativas.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    // Cuando exista el endpoint real, aquí se reemplaza por:
-    // api.get('/unidad-administrativa').then(res => setDatos(res.data));
-    setDatos(mockData);
+    let activo = true;
+
+    const cargarInicial = async () => {
+      try {
+        const data = await getUnidades();
+        if (!activo) return;
+        setUnidades(getArrayData(data));
+        setFilaSeleccionada(null);
+      } catch {
+        if (activo) setError('No se pudo cargar la lista de unidades administrativas.');
+      } finally {
+        if (activo) setLoading(false);
+      }
+    };
+
+    cargarInicial();
+
+    return () => {
+      activo = false;
+    };
   }, []);
 
   const abrirNuevo = () => {
-    setForm({ unidad: '', descripcion: '', ciudad: '' });
+    setForm(emptyForm);
     setErrores({});
     setModoEdicion(false);
     setModalAbierto(true);
@@ -45,71 +95,115 @@ function UnidadAdministrativa() {
       alert('Seleccione una fila para editar.');
       return;
     }
-    setForm(filaSeleccionada);
+
+    setForm({
+      id: filaSeleccionada.id ?? '',
+      entidad: filaSeleccionada.entidad ?? '',
+      unidad: filaSeleccionada.unidad ?? '',
+      descripcion: filaSeleccionada.descripcion ?? '',
+      ciudad: filaSeleccionada.ciudad ?? '',
+      estadoUni: filaSeleccionada.estadoUni ?? 'ACTIVO',
+    });
     setErrores({});
     setModoEdicion(true);
     setModalAbierto(true);
   };
 
-  const eliminar = () => {
-    if (!filaSeleccionada) {
-      alert('Seleccione una fila para eliminar.');
-      return;
-    }
-    const confirmar = window.confirm(
-      `¿Está seguro de eliminar la unidad ${filaSeleccionada.unidad}?`
-    );
-    if (confirmar) {
-      // Cuando exista el endpoint real:
-      // api.delete(`/unidad-administrativa/${filaSeleccionada.unidad}`)
-      setDatos(datos.filter(d => d.unidad !== filaSeleccionada.unidad));
-      setFilaSeleccionada(null);
-    }
-  };
-
   const validar = () => {
     const nuevosErrores = {};
-    if (!form.unidad.trim()) nuevosErrores.unidad = 'El código es obligatorio';
-    if (!form.ciudad.trim()) nuevosErrores.ciudad = 'La ciudad es obligatoria';
-    if (!form.descripcion.trim()) nuevosErrores.descripcion = 'La descripción es obligatoria';
+
+    if (!String(form.entidad).trim()) nuevosErrores.entidad = 'La entidad es obligatoria';
+    if (!String(form.unidad).trim()) nuevosErrores.unidad = 'La unidad es obligatoria';
+    if (!String(form.descripcion).trim()) {
+      nuevosErrores.descripcion = 'La descripcion es obligatoria';
+    }
+    if (!String(form.ciudad).trim()) nuevosErrores.ciudad = 'La ciudad es obligatoria';
+    if (!String(form.estadoUni).trim()) nuevosErrores.estadoUni = 'El estado es obligatorio';
+
     setErrores(nuevosErrores);
     return Object.keys(nuevosErrores).length === 0;
   };
 
-  const guardar = () => {
+  const guardar = async () => {
     if (!validar()) return;
 
-    if (modoEdicion) {
-      // Cuando exista el endpoint real:
-      // api.put(`/unidad-administrativa/${form.unidad}`, form)
-      setDatos(datos.map(d => (d.unidad === form.unidad ? form : d)));
-    } else {
-      // Cuando exista el endpoint real:
-      // api.post('/unidad-administrativa', form)
-      setDatos([...datos, form]);
+    try {
+      setSaving(true);
+      setError('');
+      const payload = {
+        entidad: form.entidad,
+        unidad: form.unidad,
+        descripcion: form.descripcion,
+        ciudad: form.ciudad,
+        estadoUni: form.estadoUni,
+      };
+
+      if (modoEdicion) {
+        await updateUnidad(form.id, payload);
+      } else {
+        await createUnidad(payload);
+      }
+
+      setModalAbierto(false);
+      await cargarUnidades();
+    } catch {
+      setError('No se pudo guardar la unidad administrativa.');
+    } finally {
+      setSaving(false);
     }
-    setModalAbierto(false);
   };
 
-  const handleChange = (campo) => (e) => {
-    setForm({ ...form, [campo]: e.target.value });
+  const eliminar = async () => {
+    if (!filaSeleccionada) {
+      alert('Seleccione una fila para eliminar.');
+      return;
+    }
+
+    const confirmar = window.confirm(
+      `Esta seguro de eliminar la unidad ${filaSeleccionada.unidad}?`
+    );
+
+    if (!confirmar) return;
+
+    try {
+      setSaving(true);
+      setError('');
+      await deleteUnidad(filaSeleccionada.id);
+      await cargarUnidades();
+    } catch {
+      setError('No se pudo eliminar la unidad administrativa.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleChange = (campo) => (event) => {
+    setForm({ ...form, [campo]: event.target.value });
   };
 
   return (
-    <div className="unidad-admin">
-      <h2 className="unidad-admin-titulo">ADMINISTRACION UNIDAD ADMINISTRATIVA</h2>
+    <div className="module-panel">
+      <h2 className="module-title">ADMINISTRACION UNIDAD ADMINISTRATIVA</h2>
 
-      <Table
-        columns={columns}
-        data={datos}
-        onRowClick={(row) => setFilaSeleccionada(row)}
-      />
+      {error && <div className="module-error">{error}</div>}
 
-      <div className="unidad-admin-botones">
-        <Button label="Nuevo" onClick={abrirNuevo} />
-        <Button label="Editar" onClick={abrirEditar} />
-        <Button label="Eliminar" variant="danger" onClick={eliminar} />
-        <Button label="Salir" onClick={() => setFilaSeleccionada(null)} />
+      {loading ? (
+        <div className="module-status">Cargando datos...</div>
+      ) : (
+        <Table
+          columns={columns}
+          data={unidades}
+          getRowKey={(row) => row.id}
+          selectedKey={filaSeleccionada?.id}
+          onRowClick={(row) => setFilaSeleccionada(row)}
+        />
+      )}
+
+      <div className="module-actions">
+        <Button label="Nuevo" onClick={abrirNuevo} disabled={saving} />
+        <Button label="Editar" onClick={abrirEditar} disabled={saving} />
+        <Button label="Eliminar" variant="danger" onClick={eliminar} disabled={saving} />
+        <Button label="Actualizar" onClick={cargarUnidades} disabled={loading || saving} />
       </div>
 
       <Modal
@@ -118,11 +212,22 @@ function UnidadAdministrativa() {
         onClose={() => setModalAbierto(false)}
       >
         <Input
-          label="Unidad Administrativa"
+          label="Entidad"
+          value={form.entidad}
+          onChange={handleChange('entidad')}
+          error={errores.entidad}
+        />
+        <Input
+          label="Unidad"
           value={form.unidad}
           onChange={handleChange('unidad')}
           error={errores.unidad}
-          disabled={modoEdicion}
+        />
+        <Input
+          label="Descripcion"
+          value={form.descripcion}
+          onChange={handleChange('descripcion')}
+          error={errores.descripcion}
         />
         <Input
           label="Ciudad"
@@ -131,15 +236,19 @@ function UnidadAdministrativa() {
           error={errores.ciudad}
         />
         <Input
-          label="Descripción"
-          value={form.descripcion}
-          onChange={handleChange('descripcion')}
-          error={errores.descripcion}
+          label="Estado"
+          value={form.estadoUni}
+          onChange={handleChange('estadoUni')}
+          error={errores.estadoUni}
         />
 
-        <div className="unidad-admin-modal-botones">
-          <Button label="Grabar" onClick={guardar} />
-          <Button label="Salir" onClick={() => setModalAbierto(false)} />
+        <div className="modal-actions">
+          <Button
+            label={saving ? 'Grabando...' : 'Grabar'}
+            onClick={guardar}
+            disabled={saving}
+          />
+          <Button label="Salir" onClick={() => setModalAbierto(false)} disabled={saving} />
         </div>
       </Modal>
     </div>
