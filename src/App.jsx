@@ -1,95 +1,67 @@
-import { useState } from "react"; // 1. Importamos useState
+import { useState } from "react";
 import "./App.css";
-import Button from "./components/Common/Button";
-// 2. Importamos tu nuevo componente (verifica que la ruta sea correcta)
-import { UnidadAdministrativa } from "./components/UnidadAdministrativa/UnidadAdministrativa";
+import MainLayout from "./components/layout/MainLayout";
+import Activos from "./pages/Activos";
+import Dashboard from "./pages/Dashboard";
+import Entidad from "./pages/Entidad";
+import Login from "./pages/Login";
+import ObjetoGasto from "./pages/ObjetoGasto";
+import OrganismoFinanciero from "./pages/OrganismoFinanciero";
+import UnidadAdministrativa from "./pages/UnidadAdministrativa";
+
+const getUsuarioGuardado = () => {
+  const usuarioStorage = localStorage.getItem("usuarioLogueado");
+  if (!usuarioStorage) return null;
+
+  try {
+    return JSON.parse(usuarioStorage);
+  } catch {
+    localStorage.removeItem("usuarioLogueado");
+    return null;
+  }
+};
+
 function App() {
-  // 3. Creamos el interruptor: por defecto está en "false" (apagado)
-  const [mostrarUnidadAdmin, setMostrarUnidadAdmin] = useState(false);
+  const [pantallaActiva, setPantallaActiva] = useState("inicio");
+  const [usuarioLogueado, setUsuarioLogueado] = useState(getUsuarioGuardado);
+
+  const renderPantalla = () => {
+    switch (pantallaActiva) {
+      case "unidad-administrativa":
+        return <UnidadAdministrativa />;
+      case "entidad":
+        return <Entidad />;
+      case "objeto-gasto":
+        return <ObjetoGasto />;
+      case "organismo-financiero":
+        return <OrganismoFinanciero />;
+      case "activos":
+        return <Activos />;
+      case "inicio":
+      default:
+        return <Dashboard />;
+    }
+  };
+
+  const cerrarSesion = () => {
+    localStorage.removeItem("usuarioLogueado");
+    setUsuarioLogueado(null);
+    setPantallaActiva("inicio");
+  };
+
+  if (!usuarioLogueado) {
+    return <Login onLogin={setUsuarioLogueado} />;
+  }
 
   return (
-      <div className="app">
-
-        {/* Barra superior */}
-        <div className="top-bar">
-          <span>SISTEMA DE ACTIVOS FIJOS</span>
-        </div>
-
-        {/* Header */}
-        <div className="header">
-
-          <div className="flag-placeholder">
-            BANDERA
-          </div>
-
-          <div className="header-logo">
-            <div className="logo-text">V.S.I.A.F</div>
-            <div className="logo-sub">
-              Sistema de Activos Fijos
-            </div>
-          </div>
-
-          <div className="header-user-info">
-          <span>
-            <strong>USUARIO:</strong> admin
-          </span>
-
-            <span>
-            <strong>BACKUPS:</strong> None
-          </span>
-          </div>
-
-        </div>
-
-        {/* Main */}
-        <div className="main">
-
-          <aside className="sidebar">
-
-            <h2 className="sidebar-title">
-              MENU PRINCIPAL
-            </h2>
-
-            {/* 4. Le conectamos el evento onClick al botón para encender el interruptor */}
-            <div onClick={() => setMostrarUnidadAdmin(true)}>
-              <Button label="Unidad Administrativa" />
-            </div>
-
-            <Button label="Entidad" />
-            <Button label="Objeto de Gasto" />
-            <Button label="Organismo Financiador" />
-            <Button label="Activos Fijos" />
-
-          </aside>
-
-          <section className="content">
-
-            <div className="content-info">
-              <span>ENTIDAD: 0</span>
-              <span>UNIDAD: 0</span>
-            </div>
-
-            <div className="content-body">
-
-              {/* 5. La magia: Si el estado es "true", dibujamos tu componente */}
-              {mostrarUnidadAdmin && (
-                  <div className="modal-container">
-                    <UnidadAdministrativa />
-                  </div>
-              )}
-
-              <div className="content-footer">
-                <Button label="Acerca de..." />
-                <Button label="Salir" />
-              </div>
-
-            </div>
-
-          </section>
-
-        </div>
-
-      </div>
+    <MainLayout
+      pantallaActiva={pantallaActiva}
+      onNavigate={setPantallaActiva}
+      onSalir={cerrarSesion}
+      usuarioLogueado={usuarioLogueado}
+    >
+      {renderPantalla()}
+    </MainLayout>
   );
 }
 
