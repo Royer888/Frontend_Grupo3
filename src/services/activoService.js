@@ -7,6 +7,16 @@ export const getActivos = async () => {
   return data;
 };
 
+export const getActivoById = async (id) => {
+  const { data } = await api.get(`${ENDPOINT}/${id}`);
+  return data;
+};
+
+export const getActivoByCodigo = async (codigo) => {
+  const { data } = await api.get(`${ENDPOINT}/codigo/${codigo}`);
+  return data;
+};
+
 export const createActivo = async (data) => {
   const response = await api.post(ENDPOINT, data);
   return response.data;

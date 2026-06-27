@@ -1,6 +1,6 @@
 import api from './api';
 
-const ENDPOINT = '/entidades';
+const ENDPOINT = '/entidad';
 
 export const getEntidades = async () => {
   const { data } = await api.get(ENDPOINT);

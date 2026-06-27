@@ -1,44 +1,32 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './UnidadAdministrativa.css';
 
-// Componente principal: gestión de unidades administrativas
-// eslint-disable-next-line react/prop-types
+const unidadesIniciales = [
+    { id: 1, entidad: '10', unidad: '10', descripcion: 'ADMINISTRACION CENTRAL', ciudad: 'POTOSI' },
+    { id: 2, entidad: '10', unidad: '20', descripcion: 'JEFATURA DE ESTUDIOS', ciudad: 'POTOSI' }
+];
+
 export const UnidadAdministrativa = ({ onClose }) => {
-    // Estado: lista de unidades cargadas desde el "backend" (simulado)
-    const [unidades, setUnidades] = useState([]);
-    // Estado: unidad que el usuario ha seleccionado haciendo clic en la tabla
+    const [unidades] = useState(unidadesIniciales);
     const [unidadSeleccionada, setUnidadSeleccionada] = useState(null);
+    const [mostrarFormulario, setMostrarFormulario] = useState(false);
+    const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+    const [mostrarAlerta, setMostrarAlerta] = useState(false);
+    const [mensajeAlerta, setMensajeAlerta] = useState('');
 
-    // Estados para controlar la apertura/cierre de modales
-    const [mostrarFormulario, setMostrarFormulario] = useState(false);   // Modal de nuevo/edición
-    const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false); // Modal de confirmación para eliminar
-    const [mostrarAlerta, setMostrarAlerta] = useState(false);           // Modal de alerta (errores/avisos)
-    const [mensajeAlerta, setMensajeAlerta] = useState('');              // Texto dinámico de la alerta
-
-    // Efecto que se ejecuta al montar el componente: carga datos de ejemplo
-    useEffect(() => {
-        setUnidades([
-            { id: 1, entidad: '10', unidad: '10', descripcion: 'ADMINISTRACION CENTRAL', ciudad: 'POTOSI' },
-            { id: 2, entidad: '10', unidad: '20', descripcion: 'JEFATURA DE ESTUDIOS', ciudad: 'POTOSI' }
-        ]);
-    }, []); // El array vacío asegura que solo se ejecute una vez
-
-    // Maneja el botón "Seleccionar": valida que haya unidades y que se haya elegido una
     const manejarSeleccionar = () => {
         if (unidades.length === 0) {
             setMensajeAlerta('No hay ninguna Unidad Administrativa, ingrese y seleccione una.');
             setMostrarAlerta(true);
         } else if (!unidadSeleccionada) {
-            setMensajeAlerta('No se seleccionó ninguna Unidad Administrativa.');
+            setMensajeAlerta('No se selecciono ninguna Unidad Administrativa.');
             setMostrarAlerta(true);
         }
-        // Si todo está bien, aquí iría la lógica de selección (ej. cerrar modal y pasar el dato)
     };
 
-    // Función genérica para manejar edición o eliminación (según el tipo)
     const manejarEdicionOEliminacion = (tipo) => {
         if (!unidadSeleccionada) {
-            setMensajeAlerta('No se seleccionó ninguna Unidad Administrativa.');
+            setMensajeAlerta('No se selecciono ninguna Unidad Administrativa.');
             setMostrarAlerta(true);
         } else {
             if (tipo === 'editar') setMostrarFormulario(true);
@@ -46,35 +34,29 @@ export const UnidadAdministrativa = ({ onClose }) => {
         }
     };
 
-    // Simula la eliminación (en lugar de hacer una llamada real a una API)
     const simularEliminacion = () => {
         setMostrarConfirmacion(false);
-        setMensajeAlerta('No se pudo efectuar la eliminación, inténtelo más tarde.');
+        setMensajeAlerta('No se pudo efectuar la eliminacion, intentelo mas tarde.');
         setMostrarAlerta(true);
     };
 
-    // Renderizado del componente
     return (
         <div className="window-frame">
-            {/* Barra de título de la ventana principal */}
             <div className="window-titlebar">
                 Unidad Administrativa
             </div>
 
             <div className="window-body">
-                {/* Título de la sección */}
                 <div className="section-title">
                     ADMINISTRACION UNIDAD ADMINISTRATIVA
                 </div>
 
-                {/* Panel hundido que contiene la tabla */}
                 <div className="panel">
                     <div className="table-wrapper">
                         <div className="table-scroll-area">
                             <table className="data-table">
                                 <thead>
                                 <tr>
-                                    {/* Se definen anchos fijos para mantener la estructura */}
                                     <th style={{ width: '12%' }}>ENTIDAD</th>
                                     <th style={{ width: '15%' }}>UNIDAD</th>
                                     <th style={{ width: '43%' }}>DESCRIPCION</th>
@@ -82,7 +64,6 @@ export const UnidadAdministrativa = ({ onClose }) => {
                                 </tr>
                                 </thead>
                                 <tbody id="tableBody">
-                                {/* Mapeo de las unidades para pintar cada fila */}
                                 {unidades.map((item) => (
                                     <tr
                                         key={item.id}
@@ -95,7 +76,6 @@ export const UnidadAdministrativa = ({ onClose }) => {
                                         <td>{item.ciudad}</td>
                                     </tr>
                                 ))}
-                                {/* Filas vacías para dar altura visual al contenedor (efecto de "scroll") */}
                                 <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>
                                 <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>
                                 <tr><td>&nbsp;</td><td></td><td></td><td></td></tr>
@@ -105,7 +85,6 @@ export const UnidadAdministrativa = ({ onClose }) => {
                     </div>
                 </div>
 
-                {/* Barra de botones de acción principal */}
                 <div className="button-bar">
                     <button className="btn" onClick={() => setMostrarFormulario(true)}>Nuevo</button>
                     <button className="btn" onClick={() => manejarEdicionOEliminacion('editar')}>Editar</button>
@@ -115,9 +94,6 @@ export const UnidadAdministrativa = ({ onClose }) => {
                 </div>
             </div>
 
-            {/* -------------------- MODALES -------------------- */}
-
-            {/* Modal de formulario (Nuevo / Editar) */}
             {mostrarFormulario && (
                 <div className="modal-overlay">
                     <div className="window-frame form-modal">
@@ -133,7 +109,7 @@ export const UnidadAdministrativa = ({ onClose }) => {
                                     <input type="text" className="input-largo" defaultValue={unidadSeleccionada?.ciudad || ''} />
                                 </div>
                                 <div className="form-fila">
-                                    <label>Descripción:</label>
+                                    <label>Descripcion:</label>
                                     <textarea className="input-area" defaultValue={unidadSeleccionada?.descripcion || ''}></textarea>
                                 </div>
                             </div>
@@ -146,7 +122,6 @@ export const UnidadAdministrativa = ({ onClose }) => {
                 </div>
             )}
 
-            {/* Modal de confirmación para eliminar */}
             {mostrarConfirmacion && (
                 <div className="modal-overlay">
                     <div className="window-frame dialogo-modal">
@@ -157,7 +132,7 @@ export const UnidadAdministrativa = ({ onClose }) => {
                         <div className="window-body">
                             <div className="dialogo-cuerpo">
                                 <div className="icono-pregunta">?</div>
-                                <p>¿Está seguro de eliminar esta unidad administrativa?</p>
+                                <p>Esta seguro de eliminar esta unidad administrativa?</p>
                             </div>
                             <div className="button-bar">
                                 <button className="btn" onClick={simularEliminacion}>Aceptar</button>
@@ -168,7 +143,6 @@ export const UnidadAdministrativa = ({ onClose }) => {
                 </div>
             )}
 
-            {/* Modal de alerta genérica (mensajes de error/información) */}
             {mostrarAlerta && (
                 <div className="modal-overlay">
                     <div className="window-frame dialogo-modal">

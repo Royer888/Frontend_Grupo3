@@ -1,6 +1,11 @@
 import api from './api';
 
-const ENDPOINT = '/organismos-financieros';
+const ENDPOINT = '/organismos';
+
+export const getOrganismos = async () => {
+  const { data } = await api.get(ENDPOINT);
+  return data;
+};
 
 export const getOrganismosFin = async () => {
   const { data } = await api.get(ENDPOINT);
