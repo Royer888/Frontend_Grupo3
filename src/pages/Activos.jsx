@@ -34,8 +34,8 @@ const emptyForm = {
 };
 
 const columns = [
-  { key: 'codigo', label: 'CODIGO' },
-  { key: 'descripcion', label: 'DESCRIPCION' },
+  { key: 'codigo', label: 'CÓDIGO' },
+  { key: 'descripcion', label: 'DESCRIPCIÓN' },
   { key: 'marca', label: 'MARCA' },
   { key: 'modelo', label: 'MODELO' },
   { key: 'serie', label: 'SERIE' },
@@ -43,7 +43,10 @@ const columns = [
   { key: 'fechaCompra', label: 'FECHA COMPRA' },
   { key: 'departamento', label: 'DEPARTAMENTO' },
   { key: 'estado', label: 'ESTADO' },
+  { key: 'organismoFin', label: 'ORGANISMO' },
   { key: 'unidadAdministrativa', label: 'UNIDAD' },
+  { key: 'entidad', label: 'ENTIDAD' },
+  { key: 'usuarioRegistro', label: 'USUARIO REGISTRO' },
 ];
 
 const getArrayData = (data) => {
@@ -84,6 +87,10 @@ const formatDate = (value) => {
   return String(value).slice(0, 10);
 };
 
+const mostrarValor = (valor) => {
+  return valor === null || valor === undefined || valor === '' ? '-' : valor;
+};
+
 function Activos() {
   const [activos, setActivos] = useState([]);
   const [filaSeleccionada, setFilaSeleccionada] = useState(null);
@@ -107,14 +114,20 @@ function Activos() {
   const activosTabla = useMemo(
     () =>
       activos.map((activo) => ({
-        ...activo,
-        precio: activo.precio ?? '',
-        fechaCompra: formatDate(activo.fechaCompra),
-        departamento: getLabel(activo.departamento),
-        estado: getLabel(activo.estado),
-        organismoFin: getLabel(activo.organismoFin),
-        unidadAdministrativa: getLabel(activo.unidadAdministrativa),
-        entidad: getLabel(activo.entidad),
+        id: activo.id,
+        codigo: mostrarValor(activo.codigo),
+        descripcion: mostrarValor(activo.descripcion),
+        marca: mostrarValor(activo.marca),
+        modelo: mostrarValor(activo.modelo),
+        serie: mostrarValor(activo.serie),
+        precio: mostrarValor(activo.precio),
+        fechaCompra: mostrarValor(formatDate(activo.fechaCompra)),
+        departamento: mostrarValor(activo.departamento),
+        estado: mostrarValor(activo.estado),
+        organismoFin: mostrarValor(activo.organismoFin),
+        unidadAdministrativa: mostrarValor(activo.unidadAdministrativa),
+        entidad: mostrarValor(activo.entidad),
+        usuarioRegistro: mostrarValor(activo.usuarioRegistro),
       })),
     [activos]
   );
