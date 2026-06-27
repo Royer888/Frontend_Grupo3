@@ -145,6 +145,5 @@
 .input-corto { width: 80px; padding: 2px; border: 1px solid #7f9db9; }
 .input-largo { width: 250px; padding: 2px; border: 1px solid #7f9db9; }
 .input-area { width: 250px; height: 60px; padding: 2px; border: 1px solid #7f9db9; resize: none; }
-
 .icono-pregunta { background-color: #000080; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; font-size: 24px; font-weight: bold; }
 .icono-alerta-rojo { background-color: #da3b30; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; font-size: 24px; font-weight: bold; }
