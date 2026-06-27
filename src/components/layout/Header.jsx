@@ -1,6 +1,8 @@
 import './Header.css';
 
-function Header() {
+function Header({ usuarioLogueado }) {
+  const usuario = usuarioLogueado?.usuario ?? 'admin';
+
   return (
     <>
       <div className="top-bar">
@@ -17,7 +19,7 @@ function Header() {
 
         <div className="header-user-info">
           <span>
-            <strong>USUARIO:</strong> admin
+            <strong>USUARIO:</strong> {usuario}
           </span>
           <span>
             <strong>BACKUPS:</strong> none

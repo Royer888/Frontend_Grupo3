@@ -3,10 +3,10 @@ import Header from './Header';
 import Sidebar from './Sidebar';
 import './MainLayout.css';
 
-function MainLayout({ pantallaActiva, onNavigate, onSalir, children }) {
+function MainLayout({ pantallaActiva, onNavigate, onSalir, usuarioLogueado, children }) {
   return (
     <div className="app">
-      <Header />
+      <Header usuarioLogueado={usuarioLogueado} />
 
       <div className="main">
         <Sidebar pantallaActiva={pantallaActiva} onNavigate={onNavigate} />
