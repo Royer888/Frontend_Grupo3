@@ -70,19 +70,29 @@ const obtenerTextoBase = (item, campos) => {
 };
 
 const obtenerTextoEstado = (item) => {
-  return obtenerTextoBase(item, ['codestado', 'nomestado', 'descripcion', 'estado', 'nombre']);
+  return obtenerTextoBase(item, ['nomestado', 'descripcion', 'nombre', 'estado', 'codestado']);
 };
 
 const obtenerTextoOrganismo = (item) => {
-  return obtenerTextoBase(item, ['of', 'sigla', 'des', 'descripcion', 'nombre']);
+  if (item === null || item === undefined) return '';
+  if (typeof item !== 'object') return String(item);
+
+  const sigla = item.sigla ?? item.of;
+  const descripcion = item.des ?? item.descripcion ?? item.nombre;
+
+  if (sigla && descripcion && String(sigla) !== String(descripcion)) {
+    return `${sigla} - ${descripcion}`;
+  }
+
+  return obtenerTextoBase(item, ['sigla', 'des', 'descripcion', 'nombre', 'of']);
 };
 
 const obtenerTextoUnidad = (item) => {
-  return obtenerTextoBase(item, ['descripcion', 'unidad', 'ciudad', 'estadoUni', 'nombre']);
+  return obtenerTextoBase(item, ['descripcion', 'nombre', 'unidad', 'ciudad', 'estadoUni']);
 };
 
 const obtenerTextoEntidad = (item) => {
-  return obtenerTextoBase(item, ['siglaestru', 'desEstruct', 'gestion', 'entidad', 'nombre']);
+  return obtenerTextoBase(item, ['desEstruct', 'nombre', 'entidad', 'siglaestru', 'gestion']);
 };
 
 const obtenerTextoDepartamento = (item) => {
