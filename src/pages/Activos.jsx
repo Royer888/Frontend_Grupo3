@@ -189,11 +189,6 @@ function Activos() {
         getUnidades().then((data) => ({ data })),
       ]);
 
-      console.log("Estados:", estadosResponse.data);
-      console.log("Organismos:", organismosResponse.data);
-      console.log("Entidades:", entidadesResponse.data);
-      console.log("Unidades:", unidadesResponse.data);
-
       setCatalogos(construirCatalogos({
         departamentos: departamentosResponse.data,
         estados: estadosResponse.data,
@@ -225,11 +220,6 @@ function Activos() {
           ]);
 
         if (!activo) return;
-
-        console.log("Estados:", estadosResponse.data);
-        console.log("Organismos:", organismosResponse.data);
-        console.log("Entidades:", entidadesResponse.data);
-        console.log("Unidades:", unidadesResponse.data);
 
         setActivos(getArrayData(activosData));
         setCatalogos(construirCatalogos({
