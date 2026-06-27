@@ -1,0 +1,37 @@
+.unidad-admin {
+  background: #ffffff;
+  border-radius: 4px;
+  padding: 16px;
+}
+
+.unidad-admin-titulo {
+  background: linear-gradient(to bottom, #2e6da4 0%, #1a5276 100%);
+  color: #ffffff;
+  text-align: center;
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.unidad-admin-botones {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  justify-content: center;
+}
+
+.unidad-admin-botones .btn-menu {
+  width: 110px;
+}
+
+.unidad-admin-modal-botones {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.unidad-admin-modal-botones .btn-menu {
+  width: 90px;
+}

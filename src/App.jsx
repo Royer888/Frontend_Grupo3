@@ -1,7 +1,20 @@
+import { useState } from "react";
 import "./App.css";
 import Button from "./components/Common/Button";
+import UnidadAdministrativa from "./Pages/UnidadAdministrativa";
 
 function App() {
+  const [pantallaActiva, setPantallaActiva] = useState(null);
+
+  const renderPantalla = () => {
+    switch (pantallaActiva) {
+      case "unidad-administrativa":
+        return <UnidadAdministrativa />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="app">
 
@@ -45,7 +58,10 @@ function App() {
             MENU PRINCIPAL
           </h2>
 
-          <Button label="Unidad Administrativa" />
+          <Button
+            label="Unidad Administrativa"
+            onClick={() => setPantallaActiva("unidad-administrativa")}
+          />
           <Button label="Entidad" />
           <Button label="Objeto de Gasto" />
           <Button label="Organismo Financiador" />
@@ -61,10 +77,11 @@ function App() {
           </div>
 
           <div className="content-body">
+            {renderPantalla()}
 
             <div className="content-footer">
               <Button label="Acerca de..." />
-              <Button label="Salir" />
+              <Button label="Salir" onClick={() => setPantallaActiva(null)} />
             </div>
 
           </div>
