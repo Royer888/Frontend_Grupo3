@@ -25,11 +25,11 @@ const emptyForm = {
   serie: '',
   precio: '',
   fechaCompra: '',
-  departamentoId: '',
-  estadoId: '',
-  organismoFinId: '',
-  unidadAdministrativaId: '',
-  entidadId: '',
+  departamento: '',
+  estado: '',
+  organismoFin: '',
+  unidadAdministrativa: '',
+  entidad: '',
   usuarioRegistro: '',
 };
 
@@ -61,25 +61,32 @@ const getId = (item) => {
   return String(item.id ?? item.codigo ?? item.unidad ?? item.entidad ?? '');
 };
 
-const getLabel = (item) => {
-  if (!item) return '';
-  return (
-    item.descripcion ??
-    item.nombre ??
-    item.detalle ??
-    item.codigo ??
-    item.unidad ??
-    item.entidad ??
-    item.estadoUni ??
-    getId(item)
-  );
+const obtenerTextoBase = (item, campos) => {
+  if (item === null || item === undefined) return '';
+  if (typeof item !== 'object') return String(item);
+
+  const valor = campos.find((campo) => item[campo] !== null && item[campo] !== undefined && item[campo] !== '');
+  return valor ? String(item[valor]) : getId(item);
 };
 
-const findById = (items, id) => items.find((item) => getId(item) === String(id)) ?? null;
+const obtenerTextoEstado = (item) => {
+  return obtenerTextoBase(item, ['codestado', 'nomestado', 'descripcion', 'estado', 'nombre']);
+};
 
-const getCatalogId = (value) => {
-  if (value && typeof value === 'object') return getId(value);
-  return value ? String(value) : '';
+const obtenerTextoOrganismo = (item) => {
+  return obtenerTextoBase(item, ['of', 'sigla', 'des', 'descripcion', 'nombre']);
+};
+
+const obtenerTextoUnidad = (item) => {
+  return obtenerTextoBase(item, ['descripcion', 'unidad', 'ciudad', 'estadoUni', 'nombre']);
+};
+
+const obtenerTextoEntidad = (item) => {
+  return obtenerTextoBase(item, ['siglaestru', 'desEstruct', 'gestion', 'entidad', 'nombre']);
+};
+
+const obtenerTextoDepartamento = (item) => {
+  return obtenerTextoBase(item, ['departamento', 'nombre', 'descripcion', 'ciudad']);
 };
 
 const formatDate = (value) => {
@@ -90,6 +97,30 @@ const formatDate = (value) => {
 const mostrarValor = (valor) => {
   return valor === null || valor === undefined || valor === '' ? '-' : valor;
 };
+
+const crearOpcionesRespaldo = (activosData, campo) => {
+  return [...new Set(getArrayData(activosData).map((activo) => activo[campo]).filter(Boolean))];
+};
+
+const obtenerCatalogoConRespaldo = (catalogo, activosData, campo) => {
+  const datosCatalogo = getArrayData(catalogo);
+  return datosCatalogo.length > 0 ? datosCatalogo : crearOpcionesRespaldo(activosData, campo);
+};
+
+const construirCatalogos = ({
+  departamentos,
+  estados,
+  organismos,
+  entidades,
+  unidades,
+  activosData,
+}) => ({
+  departamentos: obtenerCatalogoConRespaldo(departamentos, activosData, 'departamento'),
+  estados: obtenerCatalogoConRespaldo(estados, activosData, 'estado'),
+  organismos: obtenerCatalogoConRespaldo(organismos, activosData, 'organismoFin'),
+  entidades: obtenerCatalogoConRespaldo(entidades, activosData, 'entidad'),
+  unidades: obtenerCatalogoConRespaldo(unidades, activosData, 'unidadAdministrativa'),
+});
 
 function Activos() {
   const [activos, setActivos] = useState([]);
@@ -150,21 +181,27 @@ function Activos() {
     try {
       setLoadingCatalogos(true);
       setError('');
-      const [departamentos, estados, organismos, entidades, unidades] = await Promise.all([
-        getDepartamentos(),
-        getEstados(),
-        getOrganismos(),
-        getEntidades(),
-        getUnidades(),
+      const [departamentosResponse, estadosResponse, organismosResponse, entidadesResponse, unidadesResponse] = await Promise.all([
+        getDepartamentos().then((data) => ({ data })),
+        getEstados().then((data) => ({ data })),
+        getOrganismos().then((data) => ({ data })),
+        getEntidades().then((data) => ({ data })),
+        getUnidades().then((data) => ({ data })),
       ]);
 
-      setCatalogos({
-        departamentos: getArrayData(departamentos),
-        estados: getArrayData(estados),
-        organismos: getArrayData(organismos),
-        entidades: getArrayData(entidades),
-        unidades: getArrayData(unidades),
-      });
+      console.log("Estados:", estadosResponse.data);
+      console.log("Organismos:", organismosResponse.data);
+      console.log("Entidades:", entidadesResponse.data);
+      console.log("Unidades:", unidadesResponse.data);
+
+      setCatalogos(construirCatalogos({
+        departamentos: departamentosResponse.data,
+        estados: estadosResponse.data,
+        organismos: organismosResponse.data,
+        entidades: entidadesResponse.data,
+        unidades: unidadesResponse.data,
+        activosData: activos,
+      }));
     } catch {
       setError('No se pudieron cargar los catalogos.');
     } finally {
@@ -177,26 +214,32 @@ function Activos() {
 
     const cargarInicial = async () => {
       try {
-        const [activosData, departamentos, estados, organismos, entidades, unidades] =
+        const [activosData, departamentosResponse, estadosResponse, organismosResponse, entidadesResponse, unidadesResponse] =
           await Promise.all([
             getActivos(),
-            getDepartamentos(),
-            getEstados(),
-            getOrganismos(),
-            getEntidades(),
-            getUnidades(),
+            getDepartamentos().then((data) => ({ data })),
+            getEstados().then((data) => ({ data })),
+            getOrganismos().then((data) => ({ data })),
+            getEntidades().then((data) => ({ data })),
+            getUnidades().then((data) => ({ data })),
           ]);
 
         if (!activo) return;
 
+        console.log("Estados:", estadosResponse.data);
+        console.log("Organismos:", organismosResponse.data);
+        console.log("Entidades:", entidadesResponse.data);
+        console.log("Unidades:", unidadesResponse.data);
+
         setActivos(getArrayData(activosData));
-        setCatalogos({
-          departamentos: getArrayData(departamentos),
-          estados: getArrayData(estados),
-          organismos: getArrayData(organismos),
-          entidades: getArrayData(entidades),
-          unidades: getArrayData(unidades),
-        });
+        setCatalogos(construirCatalogos({
+          departamentos: departamentosResponse.data,
+          estados: estadosResponse.data,
+          organismos: organismosResponse.data,
+          entidades: entidadesResponse.data,
+          unidades: unidadesResponse.data,
+          activosData,
+        }));
       } catch {
         if (activo) setError('No se pudo cargar la informacion de activos fijos.');
       } finally {
@@ -243,11 +286,11 @@ function Activos() {
       serie: filaSeleccionada.serie ?? '',
       precio: filaSeleccionada.precio ?? '',
       fechaCompra: formatDate(filaSeleccionada.fechaCompra),
-      departamentoId: getCatalogId(filaSeleccionada.departamento),
-      estadoId: getCatalogId(filaSeleccionada.estado),
-      organismoFinId: getCatalogId(filaSeleccionada.organismoFin),
-      unidadAdministrativaId: getCatalogId(filaSeleccionada.unidadAdministrativa),
-      entidadId: getCatalogId(filaSeleccionada.entidad),
+      departamento: filaSeleccionada.departamento ?? '',
+      estado: filaSeleccionada.estado ?? '',
+      organismoFin: filaSeleccionada.organismoFin ?? '',
+      unidadAdministrativa: filaSeleccionada.unidadAdministrativa ?? '',
+      entidad: filaSeleccionada.entidad ?? '',
       usuarioRegistro: filaSeleccionada.usuarioRegistro ?? '',
     });
     setErrores({});
@@ -262,8 +305,8 @@ function Activos() {
     if (!String(form.descripcion).trim()) {
       nuevosErrores.descripcion = 'La descripcion es obligatoria.';
     }
-    if (!form.departamentoId) nuevosErrores.departamentoId = 'El departamento es obligatorio.';
-    if (!form.estadoId) nuevosErrores.estadoId = 'El estado es obligatorio.';
+    if (!form.departamento) nuevosErrores.departamento = 'El departamento es obligatorio.';
+    if (!form.estado) nuevosErrores.estado = 'El estado es obligatorio.';
     if (!form.fechaCompra) nuevosErrores.fechaCompra = 'La fecha de compra es obligatoria.';
     if (form.precio !== '' && Number.isNaN(Number(form.precio))) {
       nuevosErrores.precio = 'El precio debe ser un numero.';
@@ -281,11 +324,11 @@ function Activos() {
     serie: form.serie,
     precio: form.precio === '' ? null : Number(form.precio),
     fechaCompra: form.fechaCompra,
-    departamento: findById(catalogos.departamentos, form.departamentoId),
-    estado: findById(catalogos.estados, form.estadoId),
-    organismoFin: findById(catalogos.organismos, form.organismoFinId),
-    unidadAdministrativa: findById(catalogos.unidades, form.unidadAdministrativaId),
-    entidad: findById(catalogos.entidades, form.entidadId),
+    departamento: form.departamento,
+    estado: form.estado,
+    organismoFin: form.organismoFin,
+    unidadAdministrativa: form.unidadAdministrativa,
+    entidad: form.entidad,
     usuarioRegistro: form.usuarioRegistro,
   });
 
@@ -347,16 +390,20 @@ function Activos() {
     setForm({ ...form, [campo]: event.target.value });
   };
 
-  const renderSelect = (campo, label, items, errorCampo) => (
+  const renderSelect = (campo, label, items, obtenerTexto, errorCampo) => (
     <label className="form-field">
       <span>{label}</span>
       <select value={form[campo]} onChange={handleChange(campo)} disabled={saving}>
         <option value="">Seleccione...</option>
-        {items.map((item) => (
-          <option key={getId(item)} value={getId(item)}>
-            {getLabel(item)}
-          </option>
-        ))}
+        {items.map((item, index) => {
+          const texto = obtenerTexto(item);
+
+          return (
+            <option key={`${texto}-${index}`} value={texto}>
+              {texto}
+            </option>
+          );
+        })}
       </select>
       {errorCampo && <small>{errorCampo}</small>}
     </label>
@@ -454,15 +501,16 @@ function Activos() {
             disabled={saving}
           />
           {renderSelect(
-            'departamentoId',
+            'departamento',
             'Departamento',
             catalogos.departamentos,
-            errores.departamentoId
+            obtenerTextoDepartamento,
+            errores.departamento
           )}
-          {renderSelect('estadoId', 'Estado', catalogos.estados, errores.estadoId)}
-          {renderSelect('organismoFinId', 'Organismo financiador', catalogos.organismos)}
-          {renderSelect('unidadAdministrativaId', 'Unidad administrativa', catalogos.unidades)}
-          {renderSelect('entidadId', 'Entidad', catalogos.entidades)}
+          {renderSelect('estado', 'Estado', catalogos.estados, obtenerTextoEstado, errores.estado)}
+          {renderSelect('organismoFin', 'Organismo financiador', catalogos.organismos, obtenerTextoOrganismo)}
+          {renderSelect('unidadAdministrativa', 'Unidad administrativa', catalogos.unidades, obtenerTextoUnidad)}
+          {renderSelect('entidad', 'Entidad', catalogos.entidades, obtenerTextoEntidad)}
         </div>
 
         <div className="modal-actions">
