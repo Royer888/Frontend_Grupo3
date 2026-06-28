@@ -34,7 +34,7 @@ function UnidadAdministrativa() {
       // CORRECCIÓN 1: Recibimos la data directa y le ponemos un seguro || []
       const data = await getUnidades();
       setUnidades(data || []);
-    } catch (err) {
+    } catch {
       setError("No se pudo cargar la lista de unidades administrativas.");
     } finally {
       setLoading(false);
@@ -42,6 +42,7 @@ function UnidadAdministrativa() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     cargarUnidades();
   }, []);
 
@@ -101,7 +102,7 @@ function UnidadAdministrativa() {
       setMensaje("Unidad administrativa eliminada correctamente.");
       setUnidadSeleccionada(null);
       await cargarUnidades();
-    } catch (err) {
+    } catch  {
       setError("No se pudo eliminar la unidad administrativa.");
     }
   };
@@ -163,7 +164,7 @@ function UnidadAdministrativa() {
       setMostrarFormulario(false);
       limpiarFormulario();
       await cargarUnidades();
-    } catch (err) {
+    } catch  {
       setError("No se pudo guardar la unidad administrativa.");
     }
   };

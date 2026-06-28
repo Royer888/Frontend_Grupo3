@@ -30,16 +30,20 @@ function Usuarios() {
             setLoading(true);
             setError("");
 
+
             const response = await getUsuarios();
             setUsuarios(response.data);
-        } catch (err) {
+        } catch {
             setError("No se pudo cargar la lista de usuarios.");
         } finally {
             setLoading(false);
         }
+
+
     };
 
     useEffect(() => {
+// eslint-disable-next-line react-hooks/set-state-in-effect
         cargarUsuarios();
     }, []);
 
@@ -66,6 +70,7 @@ function Usuarios() {
             return;
         }
 
+
         setFormData({
             nombre: usuarioSeleccionado.nombre || "",
             apellido: usuarioSeleccionado.apellido || "",
@@ -77,6 +82,8 @@ function Usuarios() {
         setMostrarFormulario(true);
         setError("");
         setMensaje("");
+
+
     };
 
     const handleEliminar = async () => {
@@ -84,6 +91,7 @@ function Usuarios() {
             setError("Seleccione un usuario para eliminar.");
             return;
         }
+
 
         const confirmar = window.confirm(
             `¿Está seguro de eliminar el usuario ${usuarioSeleccionado.usuario}?`
@@ -98,24 +106,30 @@ function Usuarios() {
             setMensaje("Usuario eliminado correctamente.");
             setUsuarioSeleccionado(null);
             await cargarUsuarios();
-        } catch (err) {
+        } catch {
             setError("No se pudo eliminar el usuario.");
         }
+
+
     };
 
     const handleChange = (event) => {
         const { name, value } = event.target;
 
+
         setFormData({
             ...formData,
             [name]: value,
         });
+
+
     };
 
     const validarFormulario = () => {
         if (!formData.nombre.trim()) {
             return "El nombre es obligatorio.";
         }
+
 
         if (!formData.apellido.trim()) {
             return "El apellido es obligatorio.";
@@ -130,10 +144,13 @@ function Usuarios() {
         }
 
         return "";
+
+
     };
 
     const handleGuardar = async (event) => {
         event.preventDefault();
+
 
         const mensajeValidacion = validarFormulario();
 
@@ -163,14 +180,15 @@ function Usuarios() {
             setMostrarFormulario(false);
             limpiarFormulario();
             await cargarUsuarios();
-        } catch (err) {
+        } catch {
             setError("No se pudo guardar el usuario.");
         }
+
+
     };
 
-    return (
-        <section className="page-panel">
-            <h2>ADMINISTRACIÓN DE USUARIOS</h2>
+    return ( <section className="page-panel"> <h2>ADMINISTRACIÓN DE USUARIOS</h2>
+
 
             {loading && <p>Cargando usuarios...</p>}
             {error && <div className="page-error">{error}</div>}
@@ -293,6 +311,8 @@ function Usuarios() {
                 </div>
             )}
         </section>
+
+
     );
 }
 

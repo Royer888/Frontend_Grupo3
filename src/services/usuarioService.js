@@ -1,7 +1,8 @@
 import api from "./api";
 
-export const loginUsuario = (data) => {
-  return api.post("/usuarios/login", data);
+export const loginUsuario = async (credenciales) => {
+  const response = await api.post("/usuarios/login", credenciales);
+  return response.data;
 };
 
 export const getUsuarios = () => {
@@ -13,9 +14,11 @@ export const createUsuario = (data) => {
 };
 
 export const updateUsuario = (id, data) => {
+  // Se usan backticks porque incluye la variable ${id}
   return api.put(`/usuarios/${id}`, data);
 };
 
 export const deleteUsuario = (id) => {
+  // Corrección: Ahora usa backticks correctamente para la ruta dinámica
   return api.delete(`/usuarios/${id}`);
 };
