@@ -34,7 +34,6 @@ function Login({ onLogin }) {
         data,
       };
 
-      localStorage.setItem('usuarioLogueado', JSON.stringify(sesion));
       onLogin(sesion);
     } catch (error) {
       if (!error.response) {

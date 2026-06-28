@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "./App.css";
 import MainLayout from "./components/layout/MainLayout";
 import Activos from "./pages/Activos";
@@ -10,21 +10,57 @@ import OrganismoFinanciero from "./pages/OrganismoFinanciero";
 import UnidadAdministrativa from "./pages/UnidadAdministrativa";
 import Usuarios from "./pages/Usuarios";
 
-const getUsuarioGuardado = () => {
-  const usuarioStorage = localStorage.getItem("usuarioLogueado");
-  if (!usuarioStorage) return null;
-
-  try {
-    return JSON.parse(usuarioStorage);
-  } catch {
-    localStorage.removeItem("usuarioLogueado");
-    return null;
-  }
-};
+const TIEMPO_INACTIVIDAD = 10 * 60 * 1000;
+const EVENTOS_ACTIVIDAD = ["mousemove", "keydown", "click", "scroll"];
 
 function App() {
   const [pantallaActiva, setPantallaActiva] = useState("inicio");
-  const [usuarioLogueado, setUsuarioLogueado] = useState(getUsuarioGuardado);
+  const [usuarioLogueado, setUsuarioLogueado] = useState(null);
+  const timeoutInactividadRef = useRef(null);
+
+  const cerrarSesion = useCallback(() => {
+    localStorage.removeItem("usuarioLogueado");
+    setUsuarioLogueado(null);
+    setPantallaActiva("inicio");
+  }, []);
+
+  const handleLogin = (usuario) => {
+    localStorage.removeItem("usuarioLogueado");
+    setUsuarioLogueado(usuario);
+    setPantallaActiva("inicio");
+  };
+
+  useEffect(() => {
+    if (!usuarioLogueado) {
+      return undefined;
+    }
+
+    const reiniciarTemporizador = () => {
+      if (timeoutInactividadRef.current) {
+        clearTimeout(timeoutInactividadRef.current);
+      }
+
+      timeoutInactividadRef.current = setTimeout(() => {
+        cerrarSesion();
+      }, TIEMPO_INACTIVIDAD);
+    };
+
+    EVENTOS_ACTIVIDAD.forEach((evento) => {
+      window.addEventListener(evento, reiniciarTemporizador);
+    });
+
+    reiniciarTemporizador();
+
+    return () => {
+      if (timeoutInactividadRef.current) {
+        clearTimeout(timeoutInactividadRef.current);
+      }
+
+      EVENTOS_ACTIVIDAD.forEach((evento) => {
+        window.removeEventListener(evento, reiniciarTemporizador);
+      });
+    };
+  }, [cerrarSesion, usuarioLogueado]);
 
   const renderPantalla = () => {
     switch (pantallaActiva) {
@@ -47,14 +83,8 @@ function App() {
     }
   };
 
-  const cerrarSesion = () => {
-    localStorage.removeItem("usuarioLogueado");
-    setUsuarioLogueado(null);
-    setPantallaActiva("inicio");
-  };
-
   if (!usuarioLogueado) {
-    return <Login onLogin={setUsuarioLogueado} />;
+    return <Login onLogin={handleLogin} />;
   }
 
   return (

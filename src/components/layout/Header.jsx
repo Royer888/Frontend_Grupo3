@@ -2,6 +2,7 @@ import './Header.css';
 
 function Header({ usuarioLogueado }) {
   const usuario = usuarioLogueado?.usuario ?? 'admin';
+  const banderaUrl = `${import.meta.env.BASE_URL}bandera_Bolivia.jpg`;
 
   return (
     <>
@@ -11,7 +12,7 @@ function Header({ usuarioLogueado }) {
 
       <header className="header">
         <div className="flag-placeholder">
-          <img src="/bandera_Bolivia.jpg" alt="Bandera de Bolivia" className="flag-image" />
+          <img src={banderaUrl} alt="Bandera de Bolivia" className="flag-image" />
         </div>
 
         <div className="header-logo">
