@@ -5,6 +5,7 @@ export const loginUsuario = async (credenciales) => {
   return response.data;
 };
 
+
 export const getUsuarios = () => {
   return api.get("/usuarios");
 };
