@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import ObjetoGasto from "./pages/ObjetoGasto";
 import OrganismoFinanciero from "./pages/OrganismoFinanciero";
 import UnidadAdministrativa from "./pages/UnidadAdministrativa";
+import Usuarios from "./pages/Usuarios";
 
 const getUsuarioGuardado = () => {
   const usuarioStorage = localStorage.getItem("usuarioLogueado");
@@ -34,7 +35,10 @@ function App() {
       case "objeto-gasto":
         return <ObjetoGasto />;
       case "organismo-financiero":
+
         return <OrganismoFinanciero />;
+      case "usuarios":
+        return <Usuarios />;
       case "activos":
         return <Activos />;
       case "inicio":
