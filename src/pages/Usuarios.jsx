@@ -237,7 +237,7 @@ function Usuarios() {
                 <button type="button" onClick={handleEditar}>
                     Editar
                 </button>
-                <button type="button" onClick={handleEliminar}>
+                <button type="button" className="danger-button" onClick={handleEliminar}>
                     Eliminar
                 </button>
                 <button type="button" onClick={cargarUsuarios}>
