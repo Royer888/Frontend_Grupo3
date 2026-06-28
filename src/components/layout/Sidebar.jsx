@@ -8,6 +8,7 @@ const menuItems = [
   { id: 'objeto-gasto', label: 'Objeto de Gasto' },
   { id: 'organismo-financiero', label: 'Organismo Financiador' },
   { id: 'activos', label: 'Activos Fijos' },
+  { id: 'usuarios', label: 'Usuarios' },
 ];
 
 function Sidebar({ pantallaActiva, onNavigate }) {
@@ -21,9 +22,12 @@ function Sidebar({ pantallaActiva, onNavigate }) {
           label={item.label}
           variant={pantallaActiva === item.id ? 'active' : 'primary'}
           onClick={() => onNavigate(item.id)}
+
+
         />
       ))}
     </aside>
+
   );
 }
 

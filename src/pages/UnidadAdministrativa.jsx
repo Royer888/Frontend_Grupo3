@@ -1,257 +1,316 @@
-import { useEffect, useState } from 'react';
-import Button from '../components/Common/Button';
-import Input from '../components/Common/Input';
-import Modal from '../components/Common/Modal';
-import Table from '../components/Common/Table';
+import { useEffect, useState } from "react";
 import {
-  createUnidad,
-  deleteUnidad,
   getUnidades,
+  createUnidad,
   updateUnidad,
-} from '../services/unidadAdministrativaService';
-import '../styles/pages.css';
+  deleteUnidad,
+} from "../services/unidadAdministrativaService";
+import "../styles/pages.css";
 
-const emptyForm = {
-  id: '',
-  entidad: '',
-  unidad: '',
-  descripcion: '',
-  ciudad: '',
-  estadoUni: 'ACTIVO',
-};
-
-const columns = [
-  { key: 'entidad', label: 'ENTIDAD' },
-  { key: 'unidad', label: 'UNIDAD' },
-  { key: 'descripcion', label: 'DESCRIPCION' },
-  { key: 'ciudad', label: 'CIUDAD' },
-  { key: 'estadoUni', label: 'ESTADO' },
-];
-
-const getArrayData = (data) => {
-  if (Array.isArray(data)) return data;
-  if (Array.isArray(data?.data)) return data.data;
-  if (Array.isArray(data?.content)) return data.content;
-  return [];
+const initialForm = {
+  entidad: "",
+  unidad: "",
+  descripcion: "",
+  ciudad: "",
+  estadoUni: "",
 };
 
 function UnidadAdministrativa() {
   const [unidades, setUnidades] = useState([]);
-  const [filaSeleccionada, setFilaSeleccionada] = useState(null);
-  const [modalAbierto, setModalAbierto] = useState(false);
+  const [formData, setFormData] = useState(initialForm);
+  const [unidadSeleccionada, setUnidadSeleccionada] = useState(null);
   const [modoEdicion, setModoEdicion] = useState(false);
-  const [form, setForm] = useState(emptyForm);
-  const [errores, setErrores] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
+  const [mostrarFormulario, setMostrarFormulario] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [mensaje, setMensaje] = useState("");
 
   const cargarUnidades = async () => {
     try {
       setLoading(true);
-      setError('');
+      setError("");
+
+      // CORRECCIÓN 1: Recibimos la data directa y le ponemos un seguro || []
       const data = await getUnidades();
-      setUnidades(getArrayData(data));
-      setFilaSeleccionada(null);
+      setUnidades(data || []);
     } catch {
-      setError('No se pudo cargar la lista de unidades administrativas.');
+      setError("No se pudo cargar la lista de unidades administrativas.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    let activo = true;
-
-    const cargarInicial = async () => {
-      try {
-        const data = await getUnidades();
-        if (!activo) return;
-        setUnidades(getArrayData(data));
-        setFilaSeleccionada(null);
-      } catch {
-        if (activo) setError('No se pudo cargar la lista de unidades administrativas.');
-      } finally {
-        if (activo) setLoading(false);
-      }
-    };
-
-    cargarInicial();
-
-    return () => {
-      activo = false;
-    };
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    cargarUnidades();
   }, []);
 
-  const abrirNuevo = () => {
-    setForm(emptyForm);
-    setErrores({});
+  const limpiarFormulario = () => {
+    setFormData(initialForm);
+    setUnidadSeleccionada(null);
     setModoEdicion(false);
-    setModalAbierto(true);
   };
 
-  const abrirEditar = () => {
-    if (!filaSeleccionada) {
-      alert('Seleccione una fila para editar.');
+  const handleNuevo = () => {
+    limpiarFormulario();
+    setMostrarFormulario(true);
+    setError("");
+    setMensaje("");
+  };
+
+  const handleSeleccionar = (unidad) => {
+    setUnidadSeleccionada(unidad);
+  };
+
+  const handleEditar = () => {
+    if (!unidadSeleccionada) {
+      setError("Seleccione una unidad administrativa para editar.");
       return;
     }
 
-    setForm({
-      id: filaSeleccionada.id ?? '',
-      entidad: filaSeleccionada.entidad ?? '',
-      unidad: filaSeleccionada.unidad ?? '',
-      descripcion: filaSeleccionada.descripcion ?? '',
-      ciudad: filaSeleccionada.ciudad ?? '',
-      estadoUni: filaSeleccionada.estadoUni ?? 'ACTIVO',
+    setFormData({
+      entidad: unidadSeleccionada.entidad || "",
+      unidad: unidadSeleccionada.unidad || "",
+      descripcion: unidadSeleccionada.descripcion || "",
+      ciudad: unidadSeleccionada.ciudad || "",
+      estadoUni: unidadSeleccionada.estadoUni || "",
     });
-    setErrores({});
+
     setModoEdicion(true);
-    setModalAbierto(true);
+    setMostrarFormulario(true);
+    setError("");
+    setMensaje("");
   };
 
-  const validar = () => {
-    const nuevosErrores = {};
-
-    if (!String(form.entidad).trim()) nuevosErrores.entidad = 'La entidad es obligatoria';
-    if (!String(form.unidad).trim()) nuevosErrores.unidad = 'La unidad es obligatoria';
-    if (!String(form.descripcion).trim()) {
-      nuevosErrores.descripcion = 'La descripcion es obligatoria';
-    }
-    if (!String(form.ciudad).trim()) nuevosErrores.ciudad = 'La ciudad es obligatoria';
-    if (!String(form.estadoUni).trim()) nuevosErrores.estadoUni = 'El estado es obligatorio';
-
-    setErrores(nuevosErrores);
-    return Object.keys(nuevosErrores).length === 0;
-  };
-
-  const guardar = async () => {
-    if (!validar()) return;
-
-    try {
-      setSaving(true);
-      setError('');
-      const payload = {
-        entidad: form.entidad,
-        unidad: form.unidad,
-        descripcion: form.descripcion,
-        ciudad: form.ciudad,
-        estadoUni: form.estadoUni,
-      };
-
-      if (modoEdicion) {
-        await updateUnidad(form.id, payload);
-      } else {
-        await createUnidad(payload);
-      }
-
-      setModalAbierto(false);
-      await cargarUnidades();
-    } catch {
-      setError('No se pudo guardar la unidad administrativa.');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const eliminar = async () => {
-    if (!filaSeleccionada) {
-      alert('Seleccione una fila para eliminar.');
+  const handleEliminar = async () => {
+    if (!unidadSeleccionada) {
+      setError("Seleccione una unidad administrativa para eliminar.");
       return;
     }
 
     const confirmar = window.confirm(
-      `Esta seguro de eliminar la unidad ${filaSeleccionada.unidad}?`
+        `¿Está seguro de eliminar la unidad ${unidadSeleccionada.unidad}?`
     );
 
-    if (!confirmar) return;
+    if (!confirmar) {
+      return;
+    }
 
     try {
-      setSaving(true);
-      setError('');
-      await deleteUnidad(filaSeleccionada.id);
+      await deleteUnidad(unidadSeleccionada.id);
+      setMensaje("Unidad administrativa eliminada correctamente.");
+      setUnidadSeleccionada(null);
       await cargarUnidades();
-    } catch {
-      setError('No se pudo eliminar la unidad administrativa.');
-    } finally {
-      setSaving(false);
+    } catch  {
+      setError("No se pudo eliminar la unidad administrativa.");
     }
   };
 
-  const handleChange = (campo) => (event) => {
-    setForm({ ...form, [campo]: event.target.value });
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const validarFormulario = () => {
+    if (!formData.entidad.trim()) {
+      return "La entidad es obligatoria.";
+    }
+
+    if (!formData.unidad.trim()) {
+      return "La unidad es obligatoria.";
+    }
+
+    if (!formData.descripcion.trim()) {
+      return "La descripción es obligatoria.";
+    }
+
+    if (!formData.ciudad.trim()) {
+      return "La ciudad es obligatoria.";
+    }
+
+    if (!formData.estadoUni.trim()) {
+      return "El estado es obligatorio.";
+    }
+
+    return "";
+  };
+
+  const handleGuardar = async (event) => {
+    event.preventDefault();
+
+    const mensajeValidacion = validarFormulario();
+
+    if (mensajeValidacion) {
+      setError(mensajeValidacion);
+      return;
+    }
+
+    try {
+      setError("");
+
+      if (modoEdicion && unidadSeleccionada) {
+        await updateUnidad(unidadSeleccionada.id, formData);
+        setMensaje("Unidad administrativa actualizada correctamente.");
+      } else {
+        await createUnidad(formData);
+        setMensaje("Unidad administrativa registrada correctamente.");
+      }
+
+      setMostrarFormulario(false);
+      limpiarFormulario();
+      await cargarUnidades();
+    } catch  {
+      setError("No se pudo guardar la unidad administrativa.");
+    }
   };
 
   return (
-    <div className="module-panel">
-      <h2 className="module-title">ADMINISTRACION UNIDAD ADMINISTRATIVA</h2>
+      <section className="page-panel">
+        <h2>ADMINISTRACIÓN DE UNIDAD ADMINISTRATIVA</h2>
 
-      {error && <div className="module-error">{error}</div>}
+        {loading && <p>Cargando unidades administrativas...</p>}
+        {error && <div className="page-error">{error}</div>}
+        {mensaje && <div className="page-success">{mensaje}</div>}
 
-      {loading ? (
-        <div className="module-status">Cargando datos...</div>
-      ) : (
-        <Table
-          columns={columns}
-          data={unidades}
-          getRowKey={(row) => row.id}
-          selectedKey={filaSeleccionada?.id}
-          onRowClick={(row) => setFilaSeleccionada(row)}
-        />
-      )}
+        <div className="table-container">
+          <table className="vsiaf-table">
+            <thead>
+            <tr>
+              <th>ID</th>
+              <th>ENTIDAD</th>
+              <th>UNIDAD</th>
+              <th>DESCRIPCIÓN</th>
+              <th>CIUDAD</th>
+              <th>ESTADO</th>
+            </tr>
+            </thead>
 
-      <div className="module-actions">
-        <Button label="Nuevo" onClick={abrirNuevo} disabled={saving} />
-        <Button label="Editar" onClick={abrirEditar} disabled={saving} />
-        <Button label="Eliminar" variant="danger" onClick={eliminar} disabled={saving} />
-        <Button label="Actualizar" onClick={cargarUnidades} disabled={loading || saving} />
-      </div>
-
-      <Modal
-        isOpen={modalAbierto}
-        title="Unidad Administrativa"
-        onClose={() => setModalAbierto(false)}
-      >
-        <Input
-          label="Entidad"
-          value={form.entidad}
-          onChange={handleChange('entidad')}
-          error={errores.entidad}
-        />
-        <Input
-          label="Unidad"
-          value={form.unidad}
-          onChange={handleChange('unidad')}
-          error={errores.unidad}
-        />
-        <Input
-          label="Descripcion"
-          value={form.descripcion}
-          onChange={handleChange('descripcion')}
-          error={errores.descripcion}
-        />
-        <Input
-          label="Ciudad"
-          value={form.ciudad}
-          onChange={handleChange('ciudad')}
-          error={errores.ciudad}
-        />
-        <Input
-          label="Estado"
-          value={form.estadoUni}
-          onChange={handleChange('estadoUni')}
-          error={errores.estadoUni}
-        />
-
-        <div className="modal-actions">
-          <Button
-            label={saving ? 'Grabando...' : 'Grabar'}
-            onClick={guardar}
-            disabled={saving}
-          />
-          <Button label="Salir" onClick={() => setModalAbierto(false)} disabled={saving} />
+            <tbody>
+            {/* CORRECCIÓN 2: Escudo protector en caso de que unidades sea null o undefined */}
+            {!unidades || unidades.length === 0 ? (
+                <tr>
+                  <td colSpan="6">Sin registros</td>
+                </tr>
+            ) : (
+                unidades?.map((item) => (
+                    <tr
+                        key={item.id}
+                        className={
+                          unidadSeleccionada?.id === item.id ? "selected-row" : ""
+                        }
+                        onClick={() => handleSeleccionar(item)}
+                    >
+                      <td>{item.id}</td>
+                      <td>{item.entidad}</td>
+                      <td>{item.unidad}</td>
+                      <td>{item.descripcion}</td>
+                      <td>{item.ciudad}</td>
+                      <td>{item.estadoUni}</td>
+                    </tr>
+                ))
+            )}
+            </tbody>
+          </table>
         </div>
-      </Modal>
-    </div>
+
+        <div className="page-actions">
+          <button type="button" onClick={handleNuevo}>
+            Nuevo
+          </button>
+          <button type="button" onClick={handleEditar}>
+            Editar
+          </button>
+          <button type="button" onClick={handleEliminar}>
+            Eliminar
+          </button>
+          <button type="button" onClick={cargarUnidades}>
+            Actualizar
+          </button>
+        </div>
+
+        {mostrarFormulario && (
+            <div className="form-panel">
+              <h3>
+                {modoEdicion
+                    ? "Editar Unidad Administrativa"
+                    : "Nueva Unidad Administrativa"}
+              </h3>
+
+              <form onSubmit={handleGuardar} className="page-form">
+                <label>
+                  Entidad
+                  <input
+                      type="text"
+                      name="entidad"
+                      value={formData.entidad}
+                      onChange={handleChange}
+                  />
+                </label>
+
+                <label>
+                  Unidad
+                  <input
+                      type="text"
+                      name="unidad"
+                      value={formData.unidad}
+                      onChange={handleChange}
+                  />
+                </label>
+
+                <label>
+                  Descripción
+                  <input
+                      type="text"
+                      name="descripcion"
+                      value={formData.descripcion}
+                      onChange={handleChange}
+                  />
+                </label>
+
+                <label>
+                  Ciudad
+                  <input
+                      type="text"
+                      name="ciudad"
+                      value={formData.ciudad}
+                      onChange={handleChange}
+                  />
+                </label>
+
+                <label>
+                  Estado
+                  <select
+                      name="estadoUni"
+                      value={formData.estadoUni}
+                      onChange={handleChange}
+                  >
+                    <option value="">Seleccione...</option>
+                    <option value="ACTIVO">ACTIVO</option>
+                    <option value="INACTIVO">INACTIVO</option>
+                  </select>
+                </label>
+
+                <div className="form-actions">
+                  <button type="submit">Guardar</button>
+                  <button
+                      type="button"
+                      onClick={() => {
+                        setMostrarFormulario(false);
+                        limpiarFormulario();
+                      }}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            </div>
+        )}
+      </section>
   );
 }
 
