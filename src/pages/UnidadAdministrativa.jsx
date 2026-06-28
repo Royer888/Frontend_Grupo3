@@ -32,8 +32,8 @@ function UnidadAdministrativa() {
       setError("");
 
       // CORRECCIÓN 1: Recibimos la data directa y le ponemos un seguro || []
-      const data = await getUnidades();
-      setUnidades(data || []);
+      const response = await getUnidades();
+      setUnidades(response.data || []);
     } catch {
       setError("No se pudo cargar la lista de unidades administrativas.");
     } finally {
@@ -225,7 +225,7 @@ function UnidadAdministrativa() {
           <button type="button" onClick={handleEditar}>
             Editar
           </button>
-          <button type="button" onClick={handleEliminar}>
+          <button type="button" className="danger-button" onClick={handleEliminar}>
             Eliminar
           </button>
           <button type="button" onClick={cargarUnidades}>

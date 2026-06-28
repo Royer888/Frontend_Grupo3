@@ -10,7 +10,9 @@ function Header({ usuarioLogueado }) {
       </div>
 
       <header className="header">
-        <div className="flag-placeholder">BANDERA</div>
+        <div className="flag-placeholder">
+          <img src="/bandera_Bolivia.jpg" alt="Bandera de Bolivia" className="flag-image" />
+        </div>
 
         <div className="header-logo">
           <div className="logo-text">V.S.I.A.F</div>

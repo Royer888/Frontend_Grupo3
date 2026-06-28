@@ -1,6 +1,11 @@
 .login-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1b497d 0%, #2f71aa 52%, #163f6c 100%);
+  background-image:
+    linear-gradient(rgba(20, 82, 130, 0.78), rgba(20, 82, 130, 0.78)),
+    url("../assets/fondo-vsiaf.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   flex-direction: column;
   align-items: center;

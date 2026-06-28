@@ -32,6 +32,42 @@
   background: #f7fafc;
 }
 
+.dashboard-panel {
+  width: min(720px, 100%);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(106, 143, 177, 0.55);
+  border-radius: 6px;
+  padding: 18px;
+  align-self: flex-start;
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.24),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+
+.dashboard-title {
+  background: linear-gradient(to bottom, #2e6da4 0%, #1a5276 100%);
+  color: #ffffff;
+  text-align: center;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 4px;
+  margin: 0 0 16px;
+  font-weight: 700;
+}
+
+.dashboard-content {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #355a79;
+  font-size: 15px;
+  text-align: center;
+  border: 1px solid #d8e2ea;
+  background: linear-gradient(to bottom, #ffffff 0%, #f4f8fb 100%);
+  padding: 18px;
+}
+
 .module-error {
   border: 1px solid #d89b9b;
   background: #fff0f0;
@@ -132,111 +168,23 @@
   margin-top: 12px;
 }
 
-.vsiaf-table {
-  width: 100%;
-  border-collapse: collapse;
+.page-panel {
+  width: min(980px, 100%);
   background: #ffffff;
-  font-size: 13px;
+  border-radius: 4px;
+  padding: 16px;
+  align-self: flex-start;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
 }
 
-.vsiaf-table th,
-.vsiaf-table td {
-  border: 1px solid #24588d;
-  padding: 6px 8px;
-  text-align: left;
-}
-
-.vsiaf-table th {
-  background: #d9e9f7;
-  color: #173b63;
-}
-
-.vsiaf-table tr:hover {
-  background: #eef6ff;
-  cursor: pointer;
-}
-
-.selected-row {
-  background: #b9d7f0 !important;
-}
-
-.page-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.page-actions button,
-.form-actions button {
-  padding: 7px 14px;
-  border: 1px solid #24588d;
-  background: linear-gradient(#ffffff, #bfd6ea);
-  color: #173b63;
-  cursor: pointer;
-}
-
-.page-actions button:hover,
-.form-actions button:hover {
-  background: #7fb0dc;
+.page-panel > h2 {
+  background: linear-gradient(to bottom, #2e6da4 0%, #1a5276 100%);
   color: #ffffff;
-}
-
-.page-error {
-  background: #ffd6d6;
-  border: 1px solid #b30000;
-  color: #800000;
-  padding: 8px;
-  margin: 8px 0;
-  font-size: 13px;
-}
-
-.page-success {
-  background: #d6ffd9;
-  border: 1px solid #008020;
-  color: #005c16;
-  padding: 8px;
-  margin: 8px 0;
-  font-size: 13px;
-}
-
-.form-panel {
-  margin-top: 16px;
-  background: #f7fbff;
-  border: 1px solid #24588d;
-  padding: 12px;
-}
-
-.page-form {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(220px, 1fr));
-  gap: 10px;
-}
-
-.page-form label {
-  display: flex;
-  flex-direction: column;
-  color: #173b63;
-  font-size: 13px;
-  font-weight: bold;
-}
-
-.page-form input,
-.page-form select {
-  margin-top: 4px;
-  padding: 7px;
-  border: 1px solid #24588d;
-}
-
-.form-actions {
-  grid-column: 1 / -1;
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-.table-container {
-  width: 100%;
-  overflow-x: auto;
-  margin-top: 12px;
+  text-align: center;
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 4px;
+  margin: 0 0 16px;
 }
 
 .vsiaf-table {
@@ -248,18 +196,25 @@
 
 .vsiaf-table th,
 .vsiaf-table td {
-  border: 1px solid #24588d;
+  border: 1px solid #cccccc;
   padding: 6px 8px;
   text-align: left;
 }
 
 .vsiaf-table th {
-  background: #d9e9f7;
-  color: #173b63;
+  background: #1a5276;
+  color: #ffffff;
+  border-color: #154360;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.vsiaf-table tbody tr:nth-child(even) {
+  background: #eaf1f8;
 }
 
 .vsiaf-table tr:hover {
-  background: #eef6ff;
+  background: #d0e4f5;
   cursor: pointer;
 }
 
@@ -271,6 +226,8 @@
   display: flex;
   gap: 8px;
   margin-top: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .page-actions button,
@@ -280,6 +237,17 @@
   background: linear-gradient(#ffffff, #bfd6ea);
   color: #173b63;
   cursor: pointer;
+}
+
+.page-actions .danger-button {
+  background: linear-gradient(
+    to bottom,
+    #f9d9d9 0%,
+    #f0b8b8 50%,
+    #e29a9a 100%
+  );
+  color: #7a1f1f;
+  border-color: #b56d6d;
 }
 
 .page-actions button:hover,
