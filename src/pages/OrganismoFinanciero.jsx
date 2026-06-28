@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import {
-  getOrganismos,
   createOrganismo,
-  updateOrganismo,
   deleteOrganismo,
+  getOrganismos,
+  updateOrganismo,
 } from "../services/organismoFinService";
 import "../styles/pages.css";
 
@@ -20,7 +20,6 @@ function OrganismoFinanciero() {
   const [organismoSeleccionado, setOrganismoSeleccionado] = useState(null);
   const [modoEdicion, setModoEdicion] = useState(false);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [mensaje, setMensaje] = useState("");
@@ -29,29 +28,21 @@ function OrganismoFinanciero() {
     try {
       setLoading(true);
       setError("");
-      const data = await getOrganismos();  // ← Cambio principal: response → data
-      console.log("Datos recibidos:", data);
-
-      if (Array.isArray(data)) {
-        setOrganismos(data);
-        setError(""); // Limpiar error si hay datos
-      } else {
-        setOrganismos([]);
-        setError("No se pudieron cargar los organismos financieros.");
-      }
+      const response = await getOrganismos();
+      setOrganismos(response.data || []);
     } catch {
       setError("No se pudo cargar la lista de organismos financieros.");
-      setOrganismos([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    const fetchData = async () => {
+    const cargarInicial = async () => {
       await cargarOrganismos();
     };
-    fetchData();
+
+    cargarInicial();
   }, []);
 
   const limpiarFormulario = () => {
@@ -83,7 +74,6 @@ function OrganismoFinanciero() {
       des: organismoSeleccionado.des || "",
       sigla: organismoSeleccionado.sigla || "",
     });
-
     setModoEdicion(true);
     setMostrarFormulario(true);
     setError("");
@@ -97,7 +87,7 @@ function OrganismoFinanciero() {
     }
 
     const confirmar = window.confirm(
-      `¿Está seguro de eliminar el organismo ${organismoSeleccionado.sigla}?`
+      `Esta seguro de eliminar el organismo ${organismoSeleccionado.sigla || organismoSeleccionado.of}?`
     );
 
     if (!confirmar) return;
@@ -118,9 +108,9 @@ function OrganismoFinanciero() {
   };
 
   const validarFormulario = () => {
-    if (!formData.of.toString().trim()) return "El código OF es obligatorio.";
-    if (!formData.gestion.toString().trim()) return "La gestión es obligatoria.";
-    if (!formData.des.trim()) return "La descripción es obligatoria.";
+    if (!String(formData.of).trim()) return "El codigo OF es obligatorio.";
+    if (!String(formData.gestion).trim()) return "La gestion es obligatoria.";
+    if (!formData.des.trim()) return "La descripcion es obligatoria.";
     if (!formData.sigla.trim()) return "La sigla es obligatoria.";
     return "";
   };
@@ -135,14 +125,15 @@ function OrganismoFinanciero() {
     }
 
     const payload = {
-      of: Number(formData.of),
-      gestion: Number(formData.gestion),
+      of: formData.of,
+      gestion: formData.gestion ? Number(formData.gestion) : 0,
       des: formData.des,
       sigla: formData.sigla,
     };
 
     try {
       setError("");
+
       if (modoEdicion && organismoSeleccionado) {
         await updateOrganismo(organismoSeleccionado.of, payload);
         setMensaje("Organismo financiero actualizado correctamente.");
@@ -150,6 +141,7 @@ function OrganismoFinanciero() {
         await createOrganismo(payload);
         setMensaje("Organismo financiero registrado correctamente.");
       }
+
       setMostrarFormulario(false);
       limpiarFormulario();
       await cargarOrganismos();
@@ -160,7 +152,7 @@ function OrganismoFinanciero() {
 
   return (
     <section className="page-panel">
-      <h2>ADMINISTRACIÓN DE ORGANISMO FINANCIERO</h2>
+      <h2>ORGANISMO FINANCIADOR</h2>
 
       {loading && <p>Cargando organismos financieros...</p>}
       {error && <div className="page-error">{error}</div>}
@@ -171,8 +163,8 @@ function OrganismoFinanciero() {
           <thead>
             <tr>
               <th>OF</th>
-              <th>GESTIÓN</th>
-              <th>DESCRIPCIÓN</th>
+              <th>GESTION</th>
+              <th>DESCRIPCION</th>
               <th>SIGLA</th>
             </tr>
           </thead>
@@ -186,9 +178,7 @@ function OrganismoFinanciero() {
                 <tr
                   key={organismo.of}
                   className={
-                    organismoSeleccionado?.of === organismo.of
-                      ? "selected-row"
-                      : ""
+                    organismoSeleccionado?.of === organismo.of ? "selected-row" : ""
                   }
                   onClick={() => handleSeleccionar(organismo)}
                 >
@@ -206,22 +196,18 @@ function OrganismoFinanciero() {
       <div className="page-actions">
         <button type="button" onClick={handleNuevo}>Nuevo</button>
         <button type="button" onClick={handleEditar}>Editar</button>
-        <button type="button" onClick={handleEliminar}>Eliminar</button>
+        <button type="button" className="danger-button" onClick={handleEliminar}>Eliminar</button>
         <button type="button" onClick={cargarOrganismos}>Actualizar</button>
       </div>
 
       {mostrarFormulario && (
         <div className="form-panel">
-          <h3>
-            {modoEdicion
-              ? "Editar Organismo Financiero"
-              : "Nuevo Organismo Financiero"}
-          </h3>
+          <h3>{modoEdicion ? "Editar Organismo Financiero" : "Nuevo Organismo Financiero"}</h3>
           <form onSubmit={handleGuardar} className="page-form">
             <label>
-              Código OF
+              OF
               <input
-                type="number"
+                type="text"
                 name="of"
                 value={formData.of}
                 onChange={handleChange}
@@ -229,7 +215,7 @@ function OrganismoFinanciero() {
               />
             </label>
             <label>
-              Gestión
+              Gestion
               <input
                 type="number"
                 name="gestion"
@@ -238,7 +224,7 @@ function OrganismoFinanciero() {
               />
             </label>
             <label>
-              Descripción
+              Descripcion
               <input
                 type="text"
                 name="des"

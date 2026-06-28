@@ -1,25 +1,17 @@
-import api from './api';
+import api from "./api";
 
-const ENDPOINT = '/organismos';
-
-export const getOrganismos = async () => {
-  const { data } = await api.get(ENDPOINT);
-  return data;
+export const getOrganismos = () => {
+  return api.get("/organismos");
 };
 
-export const createOrganismo = async (data) => {
-  const response = await api.post(ENDPOINT, data);
-  return response.data;
+export const createOrganismo = (data) => {
+  return api.post("/organismos", data);
 };
 
-// IMPORTANTE: usa "of" en lugar de "id"
-export const updateOrganismo = async (of, data) => {
-  const response = await api.put(`${ENDPOINT}/${of}`, data);
-  return response.data;
+export const updateOrganismo = (of, data) => {
+  return api.put(`/organismos/${of}`, data);
 };
 
-// IMPORTANTE: usa "of" en lugar de "id"
-export const deleteOrganismo = async (of) => {
-  const response = await api.delete(`${ENDPOINT}/${of}`);
-  return response.data;
+export const deleteOrganismo = (of) => {
+  return api.delete(`/organismos/${of}`);
 };
