@@ -126,6 +126,60 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ===== ESTILOS PARA PANTALLA ENTIDAD (AGREGADOS POR ROGER) ===== */
+
+.page-panel {
+  width: min(980px, 100%);
+  background: #ffffff;
+  border-radius: 4px;
+  padding: 16px;
+  align-self: flex-start;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+
+.page-error {
+  border: 1px solid #d89b9b;
+  background: #fff0f0;
+  color: #8a2020;
+  padding: 8px 10px;
+  font-size: 13px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.page-success {
+  border: 1px solid #8fbd8f;
+  background: #f0fff0;
+  color: #226422;
+  padding: 8px 10px;
+  font-size: 13px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.page-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.page-actions button {
+  padding: 7px 14px;
+  border: 1px solid #24588d;
+  background: linear-gradient(#ffffff, #bfd6ea);
+  color: #173b63;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.page-actions button:hover {
+  background: #7fb0dc;
+  color: #ffffff;
+}
+
 .table-container {
   width: 100%;
   overflow-x: auto;
@@ -137,6 +191,7 @@
   border-collapse: collapse;
   background: #ffffff;
   font-size: 13px;
+  border: 1px solid #24588d;
 }
 
 .vsiaf-table th,
@@ -149,6 +204,7 @@
 .vsiaf-table th {
   background: #d9e9f7;
   color: #173b63;
+  font-weight: bold;
 }
 
 .vsiaf-table tr:hover {
@@ -160,56 +216,18 @@
   background: #b9d7f0 !important;
 }
 
-.page-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.page-actions button,
-.form-actions button {
-  padding: 7px 14px;
-  border: 1px solid #24588d;
-  background: linear-gradient(#ffffff, #bfd6ea);
-  color: #173b63;
-  cursor: pointer;
-}
-
-.page-actions button:hover,
-.form-actions button:hover {
-  background: #7fb0dc;
-  color: #ffffff;
-}
-
-.page-error {
-  background: #ffd6d6;
-  border: 1px solid #b30000;
-  color: #800000;
-  padding: 8px;
-  margin: 8px 0;
-  font-size: 13px;
-}
-
-.page-success {
-  background: #d6ffd9;
-  border: 1px solid #008020;
-  color: #005c16;
-  padding: 8px;
-  margin: 8px 0;
-  font-size: 13px;
-}
-
 .form-panel {
   margin-top: 16px;
   background: #f7fbff;
   border: 1px solid #24588d;
   padding: 12px;
+  border-radius: 4px;
 }
 
 .page-form {
   display: grid;
-  grid-template-columns: repeat(2, minmax(220px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(2, minmax(200px, 1fr));
+  gap: 10px 12px;
 }
 
 .page-form label {
@@ -225,6 +243,13 @@
   margin-top: 4px;
   padding: 7px;
   border: 1px solid #24588d;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.page-form input:disabled {
+  background: #e9ecef;
+  color: #6c757d;
 }
 
 .form-actions {
@@ -233,110 +258,37 @@
   gap: 8px;
   margin-top: 8px;
 }
-.table-container {
-  width: 100%;
-  overflow-x: auto;
-  margin-top: 12px;
-}
 
-.vsiaf-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #ffffff;
-  font-size: 13px;
-}
-
-.vsiaf-table th,
-.vsiaf-table td {
-  border: 1px solid #24588d;
-  padding: 6px 8px;
-  text-align: left;
-}
-
-.vsiaf-table th {
-  background: #d9e9f7;
-  color: #173b63;
-}
-
-.vsiaf-table tr:hover {
-  background: #eef6ff;
-  cursor: pointer;
-}
-
-.selected-row {
-  background: #b9d7f0 !important;
-}
-
-.page-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.page-actions button,
 .form-actions button {
   padding: 7px 14px;
   border: 1px solid #24588d;
   background: linear-gradient(#ffffff, #bfd6ea);
   color: #173b63;
   cursor: pointer;
+  border-radius: 4px;
+  font-size: 13px;
 }
 
-.page-actions button:hover,
 .form-actions button:hover {
   background: #7fb0dc;
   color: #ffffff;
 }
 
-.page-error {
-  background: #ffd6d6;
-  border: 1px solid #b30000;
-  color: #800000;
-  padding: 8px;
-  margin: 8px 0;
-  font-size: 13px;
+.form-actions button[type="submit"] {
+  background: linear-gradient(#2e6da4, #1a5276);
+  color: #ffffff;
+  border-color: #1a5276;
 }
 
-.page-success {
-  background: #d6ffd9;
-  border: 1px solid #008020;
-  color: #005c16;
-  padding: 8px;
-  margin: 8px 0;
-  font-size: 13px;
+.form-actions button[type="submit"]:hover {
+  background: #1a5276;
 }
 
-.form-panel {
-  margin-top: 16px;
-  background: #f7fbff;
-  border: 1px solid #24588d;
-  padding: 12px;
-}
-
-.page-form {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(220px, 1fr));
-  gap: 10px;
-}
-
-.page-form label {
-  display: flex;
-  flex-direction: column;
+.form-panel h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
   color: #173b63;
-  font-size: 13px;
-  font-weight: bold;
-}
-
-.page-form input,
-.page-form select {
-  margin-top: 4px;
-  padding: 7px;
-  border: 1px solid #24588d;
-}
-
-.form-actions {
-  grid-column: 1 / -1;
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
+  font-size: 15px;
+  border-bottom: 1px solid #24588d;
+  padding-bottom: 8px;
 }
